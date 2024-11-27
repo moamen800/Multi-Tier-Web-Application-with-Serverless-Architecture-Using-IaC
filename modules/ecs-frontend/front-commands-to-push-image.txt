@@ -1,0 +1,22 @@
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 307946672811.dkr.ecr.us-east-1.amazonaws.com
+
+aws ecr create-repository --repository-name frontend-mern --region us-east-1
+
+docker buildx build -t frontend-business_logic -f modules/ecs-frontend/Dockerfile .
+or
+docker build -t frontend-business_logic -f modules/ecs-frontend/Dockerfile .
+
+docker tag frontend-business_logic:latest 307946672811.dkr.ecr.us-east-1.amazonaws.com/frontend-mern:latest
+
+docker push 307946672811.dkr.ecr.us-east-1.amazonaws.com/frontend-mern:latest
+
+aws ecr delete-repository --repository-name frontend-mern --region us-east-1 --force
+
+docker build -t frontend-image .
+docker run -d -p 80:80 --name continer1 frontend-image
+docker run -p 80:80 --name continer1 frontend-image
+docker exec -it 883826b20992 /bin/sh
+grep -r "ALBDNS" .
+
+docker run -e ALBDNS="$(terraform output -raw business_logic_alb_dns_name)" -p 80:80 --name continer1 frontend-image
+docker run -e ALBDNS="$(terraform output -raw business_logic_alb_dns_name)" -d -p 80:80 --name continer1 frontend-image
