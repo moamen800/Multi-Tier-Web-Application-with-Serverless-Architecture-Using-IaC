@@ -2,7 +2,7 @@
 # Create Subnet Group for Amazon DocumentDB Cluster
 resource "aws_docdb_subnet_group" "documentdb_subnet_group" {
   name       = "documentdb-subnet-group"        # Name for the subnet group
-  subnet_ids = var.public_subnet_documentDB_ids # Specify actual subnet IDs within your VPC
+  subnet_ids = var.private_subnets_ids # Specify actual subnet IDs within your VPC
 
   tags = {
     Name = "DocumentDB Subnet Group"

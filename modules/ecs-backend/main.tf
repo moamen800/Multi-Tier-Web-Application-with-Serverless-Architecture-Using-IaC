@@ -61,9 +61,9 @@ resource "aws_ecs_service" "backend_service" {
   task_definition = aws_ecs_task_definition.backend_task.arn
 
   network_configuration {
-    subnets          = var.public_subnet_ids      # Subnets for the ECS tasks
-    security_groups  = [var.business_logic_sg_id] # Security groups for the ECS tasks
-    assign_public_ip = true                       # Assign public IP to the tasks
+    subnets          = var.private_subnets_ids      # Subnets for the ECS tasks
+    security_groups  = [var.business_logic_sg_id]   # Security groups for the ECS tasks
+    assign_public_ip = false                        # Assign public IP to the tasks
   }
 
   load_balancer {

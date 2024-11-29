@@ -12,12 +12,12 @@ module "security_groups" {
   vpc_id = module.network.vpc_id
 }
 
-module "edge_layer" {
-  source                    = "./modules/edge_layer"
-  aws_region                = var.aws_region
-  presentation_alb_dns_name = module.ecs-frontend.presentation_alb_dns_name
-  presentation_alb_id       = module.ecs-frontend.presentation_alb_id
-}
+# module "edge_layer" {
+#   source                    = "./modules/edge_layer"
+#   aws_region                = var.aws_region
+#   presentation_alb_dns_name = module.ecs-frontend.presentation_alb_dns_name
+#   presentation_alb_id       = module.ecs-frontend.presentation_alb_id
+# }
 
 module "ecs-frontend" {
   source                      = "./modules/ecs-frontend"
@@ -35,6 +35,7 @@ module "ecs-backend" {
   source                      = "./modules/ecs-backend"
   vpc_id                      = module.network.vpc_id
   public_subnet_ids           = module.network.public_subnet_ids
+  private_subnets_ids         = module.network.private_subnets_ids
   business_logic_alb_sg_id    = module.security_groups.business_logic_alb_sg_id
   business_logic_sg_id        = module.security_groups.business_logic_sg_id
   documentdb_cluster_endpoint = module.database.documentdb_cluster_endpoint
@@ -44,10 +45,11 @@ module "ecs-backend" {
 }
 
 module "database" {
-  source                       = "./modules/database"
-  vpc_id                       = module.network.vpc_id
-  vpc_cidr                     = module.network.vpc_cidr
-  DocumentDB_sg                = module.security_groups.DocumentDB_sg
-  public_subnet_documentDB_ids = module.network.public_subnet_documentDB_ids
-  depends_on                   = [module.network]
+  source              = "./modules/database"
+  vpc_id              = module.network.vpc_id
+  vpc_cidr            = module.network.vpc_cidr
+  DocumentDB_sg       = module.security_groups.DocumentDB_sg
+  private_subnets_ids = module.network.private_subnets_ids
+  depends_on          = [module.network]
 }
+
