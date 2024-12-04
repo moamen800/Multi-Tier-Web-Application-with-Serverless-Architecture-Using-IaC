@@ -1,4 +1,4 @@
-###################################### AWS Region Variable #######################################
+# ###################################### AWS Region Variable #######################################
 variable "aws_region" {
   description = "AWS region for resource deployment"
 }

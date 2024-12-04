@@ -56,7 +56,7 @@ resource "aws_ecs_task_definition" "backend_task" {
 resource "aws_ecs_service" "backend_service" {
   name            = "backend_service"
   cluster         = aws_ecs_cluster.backend_cluster.id
-  desired_count   = 1         # Number of tasks to run
+  desired_count   = 2         # Number of tasks to run
   launch_type     = "FARGATE" # ECS launch type is Fargate
   task_definition = aws_ecs_task_definition.backend_task.arn
 
@@ -128,3 +128,29 @@ resource "aws_lb_target_group" "business_logic_target_group" {
   }
 }
 
+
+# resource "aws_cloudwatch_log_group" "backend_log_group" {
+#   name = "/ecs/backend"
+#   retention_in_days = 7
+# }
+
+# resource "aws_cloudwatch_metric_alarm" "backend_cpu_alarm" {
+#   alarm_name          = "backend-cpu-high"
+#   comparison_operator = "GreaterThanThreshold"
+#   evaluation_periods  = 1
+#   metric_name         = "CPUUtilization"
+#   namespace           = "AWS/ECS"
+#   period              = 300
+#   statistic           = "Average"
+#   threshold           = 75
+#   alarm_description   = "Alarm if backend ECS CPU utilization exceeds 75%"
+
+
+#   dimensions = {
+#     ClusterName = aws_ecs_cluster.backend_cluster.name
+#     ServiceName = aws_ecs_service.backend_service.name
+#   }
+
+#   actions_enabled = true
+#   alarm_actions   = []  # Add SNS Topic for notifications if needed
+# }

@@ -12,16 +12,17 @@ module "security_groups" {
   vpc_id = module.network.vpc_id
 }
 
-# module "edge_layer" {
-#   source                    = "./modules/edge_layer"
-#   aws_region                = var.aws_region
-#   presentation_alb_dns_name = module.ecs-frontend.presentation_alb_dns_name
-#   presentation_alb_id       = module.ecs-frontend.presentation_alb_id
-# }
+module "edge_layer" {
+  source                    = "./modules/edge_layer"
+  aws_region                = var.aws_region
+  presentation_alb_dns_name = module.ecs-frontend.presentation_alb_dns_name
+  presentation_alb_id       = module.ecs-frontend.presentation_alb_id
+}
 
 module "ecs-frontend" {
   source                      = "./modules/ecs-frontend"
   vpc_id                      = module.network.vpc_id
+  aws_region                  = var.aws_region
   public_subnet_ids           = module.network.public_subnet_ids
   presentation_alb_sg_id      = module.security_groups.presentation_alb_sg_id
   presentation_sg_id          = module.security_groups.presentation_sg_id
@@ -34,6 +35,7 @@ module "ecs-frontend" {
 module "ecs-backend" {
   source                      = "./modules/ecs-backend"
   vpc_id                      = module.network.vpc_id
+  aws_region                  = var.aws_region
   public_subnet_ids           = module.network.public_subnet_ids
   private_subnets_ids         = module.network.private_subnets_ids
   business_logic_alb_sg_id    = module.security_groups.business_logic_alb_sg_id
@@ -52,4 +54,3 @@ module "database" {
   private_subnets_ids = module.network.private_subnets_ids
   depends_on          = [module.network]
 }
-

@@ -4,6 +4,11 @@ variable "vpc_id" {
   type        = string # A string type to hold the ID of the VPC
 }
 
+variable "aws_region" {
+  description = "AWS region to deploy resources"
+  type        = string
+}
+
 variable "public_subnet_ids" {
   description = "List of Public Subnet IDs"
   type        = list(string)

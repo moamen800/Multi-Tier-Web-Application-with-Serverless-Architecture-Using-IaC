@@ -20,7 +20,7 @@ resource "aws_ecs_task_definition" "frontend_task" {
 
   cpu    = "256"  # CPU units (0.25 vCPU)
   memory = "1024" # Memory allocation (1024 MiB)
-
+  
   # Container definition (this is where you define the container settings)
   container_definitions = <<TASK_DEFINITION
   [
@@ -52,7 +52,7 @@ resource "aws_ecs_service" "frontend_service" {
   name            = "frontend_service"                        # Name of the ECS service
   cluster         = aws_ecs_cluster.frontend_cluster.id       # Reference to the ECS cluster
   task_definition = aws_ecs_task_definition.frontend_task.arn # Reference to the task definition
-  desired_count   = 1                                         # Number of tasks to run (1 task here)
+  desired_count   = 2                                         # Number of tasks to run (1 task here)
   launch_type     = "FARGATE"                                 # Launch type (Fargate)
 
   network_configuration {
@@ -119,3 +119,28 @@ resource "aws_lb_target_group" "presentation_target_group" {
     Name = "presentation Target Group" # Tag for identification
   }
 }
+
+# resource "aws_cloudwatch_log_group" "frontend_log_group" {
+#   name = "/ecs/frontend"
+#   retention_in_days = 7  # Customize retention
+# }
+
+# resource "aws_cloudwatch_metric_alarm" "frontend_cpu_alarm" {
+#   alarm_name          = "frontend-cpu-high"
+#   comparison_operator = "GreaterThanThreshold"
+#   evaluation_periods  = 1
+#   metric_name         = "CPUUtilization"
+#   namespace           = "AWS/ECS"
+#   period              = 300
+#   statistic           = "Average"
+#   threshold           = 75
+#   alarm_description   = "Alarm if frontend ECS CPU utilization exceeds 75%"
+
+#   dimensions = {
+#     ClusterName = aws_ecs_cluster.frontend_cluster.name
+#     ServiceName = aws_ecs_service.frontend_service.name
+#   }
+
+#   actions_enabled = true
+#   alarm_actions   = []  # Add SNS Topic for notifications if needed
+# }
