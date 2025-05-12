@@ -1,62 +1,54 @@
-# The VPC ID to associate the resources with
 variable "vpc_id" {
-  description = "The VPC ID"
-  type        = string # A string type to hold the ID of the VPC
+  description = "The ID of the VPC to associate all resources with"
+  type        = string
 }
 
 variable "aws_region" {
-  description = "AWS region to deploy resources"
+  description = "The AWS region where the resources will be deployed"
   type        = string
 }
 
 variable "public_subnet_ids" {
-  description = "List of Public Subnet IDs"
+  description = "List of public subnet IDs for load balancers or public-facing services"
   type        = list(string)
 }
 
 variable "private_subnets_ids" {
-  description = "List of subnet IDs for the DB subnet group"
+  description = "List of private subnet IDs used for backend services or database subnet groups"
   type        = list(string)
 }
 
 variable "business_logic_alb_sg_id" {
-  description = "Security group ID for the presentation business_logiclication load balancer"
-  type        = string # A string type to hold the ID of the security group associated with the ALB
+  description = "The security group ID attached to the Application Load Balancer for the business logic layer"
+  type        = string
 }
 
 variable "business_logic_sg_id" {
-  description = "The ID of the presentation security group for instances"
-  type        = string # A string type to hold the security group ID for the EC2 instances
-}
-
-# Variable for the business_logiclication name
-variable "business_logic_name" {
-  description = "The name of the business_logiclication container"
+  description = "The security group ID attached to the EC2 instances handling the business logic"
   type        = string
-  default     = "Backend-container"
 }
 
-# Variable for the image URI
-variable "image_uri" {
-  description = "The URI of the Docker image for the business_logiclication"
+variable "family_name_backend" {
+  description = "The ECS task definition family name for the backend application"
   type        = string
-  default     = "307946672811.dkr.ecr.us-east-1.amazonaws.com/backend-mern:latest"
 }
 
-# Variable for ECS execution role ARN
+variable "image_uri_backend" {
+  description = "The URI of the Docker image for the backend service"
+  type        = string
+}
+
 variable "ecs_execution_role_arn" {
-  description = "The ARN of the ECS execution role"
+  description = "The ARN of the ECS task execution role used by Fargate or ECS to pull images and log to CloudWatch"
   type        = string
 }
 
-# Variable for ECS task role ARN
 variable "ecs_task_role_arn" {
-  description = "The ARN of the ECS task role"
+  description = "The ARN of the ECS task role assumed by the application task to access AWS services"
   type        = string
 }
-
 
 variable "documentdb_cluster_endpoint" {
-  description = "The primary endpoint of the Amazon DocumentDB Cluster."
+  description = "The primary endpoint URL of the Amazon DocumentDB cluster"
   type        = string
 }

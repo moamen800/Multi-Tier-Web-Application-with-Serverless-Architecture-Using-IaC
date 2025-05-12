@@ -1,19 +1,19 @@
-########################################### BACKEND ###########################################
+########################################### ECS BACKEND ###########################################
 
 # ECS Cluster definition
 resource "aws_ecs_cluster" "backend_cluster" {
   name = "backend-cluster"
 
-  # Enabling container insights for the ECS cluster (set to 'disabled' in this case)
+  # Enabling container insights for the ECS cluster
   setting {
     name  = "containerInsights" # The setting name for enabling container insights
-    value = "disabled"          # The value to disable container insights
+    value = "enabled"           # The value to enable container insights
   }
 }
 
 # ECS Task Definition for backend service
 resource "aws_ecs_task_definition" "backend_task" {
-  family                   = var.business_logic_name
+  family                   = var.family_name_backend
   network_mode             = "awsvpc" # Fargate requires 'awsvpc' mode for networking (VPC networking)
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = var.ecs_execution_role_arn # IAM role for ECS task execution
@@ -26,8 +26,8 @@ resource "aws_ecs_task_definition" "backend_task" {
   container_definitions = <<TASK_DEFINITION
   [
     {
-      "name": "${var.business_logic_name}",
-      "image": "${var.image_uri}",
+      "name": "${var.family_name_backend}",
+      "image": "${var.image_uri_backend}",
       "essential": true,
       "portMappings": [
         {
@@ -61,14 +61,14 @@ resource "aws_ecs_service" "backend_service" {
   task_definition = aws_ecs_task_definition.backend_task.arn
 
   network_configuration {
-    subnets          = var.private_subnets_ids      # Subnets for the ECS tasks
-    security_groups  = [var.business_logic_sg_id]   # Security groups for the ECS tasks
-    assign_public_ip = false                        # Assign public IP to the tasks
+    subnets          = var.private_subnets_ids    # Subnets for the ECS tasks
+    security_groups  = [var.business_logic_sg_id] # Security groups for the ECS tasks
+    assign_public_ip = false                      # Assign public IP to the tasks
   }
 
   load_balancer {
     target_group_arn = aws_lb_target_group.business_logic_target_group.arn
-    container_name   = var.business_logic_name
+    container_name   = var.family_name_backend
     container_port   = 3000
   }
   depends_on = [aws_lb_target_group.business_logic_target_group]
@@ -127,30 +127,3 @@ resource "aws_lb_target_group" "business_logic_target_group" {
     Name = "business logic Target Group" # Tag for identifying the target group
   }
 }
-
-
-# resource "aws_cloudwatch_log_group" "backend_log_group" {
-#   name = "/ecs/backend"
-#   retention_in_days = 7
-# }
-
-# resource "aws_cloudwatch_metric_alarm" "backend_cpu_alarm" {
-#   alarm_name          = "backend-cpu-high"
-#   comparison_operator = "GreaterThanThreshold"
-#   evaluation_periods  = 1
-#   metric_name         = "CPUUtilization"
-#   namespace           = "AWS/ECS"
-#   period              = 300
-#   statistic           = "Average"
-#   threshold           = 75
-#   alarm_description   = "Alarm if backend ECS CPU utilization exceeds 75%"
-
-
-#   dimensions = {
-#     ClusterName = aws_ecs_cluster.backend_cluster.name
-#     ServiceName = aws_ecs_service.backend_service.name
-#   }
-
-#   actions_enabled = true
-#   alarm_actions   = []  # Add SNS Topic for notifications if needed
-# }

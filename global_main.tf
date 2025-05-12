@@ -1,6 +1,9 @@
-# Initialize the modules
 module "network" {
-  source = "./modules/network"
+  source          = "./modules/network"
+  vpc_name        = var.vpc_name
+  vpc_cidr        = var.vpc_cidr
+  public_subnets  = var.public_subnets
+  private_subnets = var.private_subnets
 }
 
 module "IAMRoles" {
@@ -36,6 +39,8 @@ module "ecs-backend" {
   source                      = "./modules/ecs-backend"
   vpc_id                      = module.network.vpc_id
   aws_region                  = var.aws_region
+  image_uri_backend           = var.image_uri_backend
+  family_name_backend         = var.family_name_backend
   public_subnet_ids           = module.network.public_subnet_ids
   private_subnets_ids         = module.network.private_subnets_ids
   business_logic_alb_sg_id    = module.security_groups.business_logic_alb_sg_id
@@ -48,9 +53,22 @@ module "ecs-backend" {
 
 module "database" {
   source              = "./modules/database"
+  db_name             = var.db_name
+  db_username         = var.db_username
+  db_password         = var.db_password
   vpc_id              = module.network.vpc_id
   vpc_cidr            = module.network.vpc_cidr
-  DocumentDB_sg       = module.security_groups.DocumentDB_sg
   private_subnets_ids = module.network.private_subnets_ids
+  DocumentDB_sg_id    = module.security_groups.DocumentDB_sg_id
   depends_on          = [module.network]
+}
+
+module "monitoring" {
+  source            = "./modules/monitoring"
+  image_id          = var.image_id
+  key_name          = var.key_name
+  public_subnet_ids = module.network.public_subnet_ids
+  # private_subnet_ids = module.network.private_subnet_ids
+  Monitoring_sg_id = module.security_groups.Monitoring_sg_id
+  depends_on       = [module.ecs-frontend]
 }

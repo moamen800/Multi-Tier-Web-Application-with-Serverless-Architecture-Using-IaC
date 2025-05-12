@@ -12,7 +12,7 @@ resource "aws_ecs_cluster" "frontend_cluster" {
 
 # ECS Task Definition - Defines the task with Fargate compatibility and resource allocation
 resource "aws_ecs_task_definition" "frontend_task" {
-  family                   = var.family_name            # Task family name (presentation name)
+  family                   = var.family_name_frontend   # Task family name (presentation name)
   network_mode             = "awsvpc"                   # Network mode for the task (use awsvpc for Fargate)
   requires_compatibilities = ["FARGATE"]                # Ensures task uses Fargate launch type
   execution_role_arn       = var.ecs_execution_role_arn # IAM role for ECS task execution (permissions for AWS services)
@@ -20,13 +20,13 @@ resource "aws_ecs_task_definition" "frontend_task" {
 
   cpu    = "256"  # CPU units (0.25 vCPU)
   memory = "1024" # Memory allocation (1024 MiB)
-  
+
   # Container definition (this is where you define the container settings)
   container_definitions = <<TASK_DEFINITION
   [
     {
-      "name": "Frontend-Container",  
-      "image": "${var.image_uri}",  
+      "name": "${var.family_name_frontend}",
+      "image": "${var.image_uri_frontend}",  
       "essential": true,  
       "portMappings": [
         {
@@ -61,10 +61,10 @@ resource "aws_ecs_service" "frontend_service" {
     assign_public_ip = true                     # Assign public IP to ECS tasks so they can be accessed over the internet
   }
 
-  # Attach the service to an Application Load Balancer (ALB)
+  # Attach the service to an Application Load Balancer (ALB)enable_execute_command
   load_balancer {
     target_group_arn = aws_lb_target_group.presentation_target_group.arn # The target group associated with the ALB
-    container_name   = "Frontend-Container"                              # The container in the task to route traffic to
+    container_name   = var.family_name_frontend                          # The container in the task to route traffic to
     container_port   = 80                                                # Port on the container to route traffic to (must match the port in container definition)
   }
   depends_on = [aws_lb_target_group.presentation_target_group]
@@ -119,28 +119,3 @@ resource "aws_lb_target_group" "presentation_target_group" {
     Name = "presentation Target Group" # Tag for identification
   }
 }
-
-# resource "aws_cloudwatch_log_group" "frontend_log_group" {
-#   name = "/ecs/frontend"
-#   retention_in_days = 7  # Customize retention
-# }
-
-# resource "aws_cloudwatch_metric_alarm" "frontend_cpu_alarm" {
-#   alarm_name          = "frontend-cpu-high"
-#   comparison_operator = "GreaterThanThreshold"
-#   evaluation_periods  = 1
-#   metric_name         = "CPUUtilization"
-#   namespace           = "AWS/ECS"
-#   period              = 300
-#   statistic           = "Average"
-#   threshold           = 75
-#   alarm_description   = "Alarm if frontend ECS CPU utilization exceeds 75%"
-
-#   dimensions = {
-#     ClusterName = aws_ecs_cluster.frontend_cluster.name
-#     ServiceName = aws_ecs_service.frontend_service.name
-#   }
-
-#   actions_enabled = true
-#   alarm_actions   = []  # Add SNS Topic for notifications if needed
-# }

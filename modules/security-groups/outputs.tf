@@ -19,7 +19,12 @@ output "business_logic_sg_id" {
   value       = aws_security_group.business_logic_sg.id
 }
 
-output "DocumentDB_sg" {
+output "DocumentDB_sg_id" {
   description = "The ID of the presentation security group for instances"
   value       = aws_security_group.DocumentDB_sg.id
+}
+
+output "Monitoring_sg_id" {
+  description = "The ID of the Monitoring security group for instances"
+  value       = aws_security_group.monitoring_sg.id
 }

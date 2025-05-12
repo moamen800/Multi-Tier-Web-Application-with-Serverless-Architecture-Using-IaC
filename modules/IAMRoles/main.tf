@@ -23,7 +23,7 @@ resource "aws_iam_role" "ecs_execution_role" {
 # Resource definition for IAM policy that allows ECS tasks to pull images from ECR
 resource "aws_iam_policy" "ecs_execution_policy" {
   name        = "ecs_execution_policy"
-  description = "Policy to allow ECS tasks to pull images from ECR and interact with logs"
+  description = "Policy to allow ECS tasks to pull images from ECR, write to logs, and send metrics"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -37,6 +37,12 @@ resource "aws_iam_policy" "ecs_execution_policy" {
           "ecr:DescribeRepositories",
           "logs:CreateLogStream",
           "logs:PutLogEvents",
+          "logs:DescribeLogStreams",
+          "logs:DescribeLogGroups",
+          "cloudwatch:PutMetricData",
+          "cloudwatch:GetMetricData",
+          "cloudwatch:GetMetricStatistics",
+          "cloudwatch:ListMetrics",
           "elasticloadbalancing:DescribeLoadBalancers"
         ]
         Resource = "*"
@@ -44,6 +50,7 @@ resource "aws_iam_policy" "ecs_execution_policy" {
     ]
   })
 }
+
 
 # Attach the custom ECR policy to the ECS execution role
 resource "aws_iam_role_policy_attachment" "ecs_execution_policy_attachment" {

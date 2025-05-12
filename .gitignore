@@ -1,11 +1,27 @@
+# Terraform State Files
+# These files store the state of your infrastructure.
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
+*.backup
 .terraform/
-.terraform.lock.hcl
-.terraform.tfstate.lock.info
 
-text.txt
+# Local Variables File
+# This file contains sensitive or environment-specific data.
+terraform.tfvars
+
+# Terraform Lock File (Optional)
+# Lock file to ensure consistent versions of providers and modules.
+.terraform.lock.hcl
+
+# Folder Structure Documentation
+# A text file detailing the folder structure of your project.
 folder-structure
 
-Dockerscript.sh
-Dockerfile
+# Key Pair
+# PEM file for your key pair, used for SSH or other secure connections.
+keypair.pem
+
+# === Project Notes & Configuration Files ===
+commands.sh
+modules/monitoring/prometheus_files/
+.DS_Store
