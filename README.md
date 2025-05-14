@@ -5,9 +5,8 @@ This repository delivers a complete **Infrastructure as Code (IaC)** implementat
 ---
 
 ## 📐 Architecture Overview
-
 The system is structured into **4 logical layers** for clear separation of concerns and scalability:
-
+---
 ### 🔹 1. Edge Layer
 - **Amazon CloudFront**: Caches and distributes static content globally
 - **AWS WAF**: Protects against common web-based attacks (SQLi, XSS, etc.)
@@ -28,9 +27,10 @@ The system is structured into **4 logical layers** for clear separation of conce
 - **AWS CloudWatch**: Logs, metrics, dashboards, and alarms
 - **Prometheus + Grafana Stack**: Self-hosted on EC2 for custom metric ingestion
 
-> 🔍 See [architecture/README.md](./architecture/README.md) for a deeper breakdown  
-> 🖼 View the architecture diagram here: `architecture/Serverless.png`
+### 📸 Architecture Diagram
 
+![Architecture](./architecture/Serverless.png)
+---
 ---
 
 ## 📁 Repository Structure
@@ -170,12 +170,6 @@ terraform apply --auto-approve
 terraform destroy --auto-approve
 terraform fmt -recursive
 ```
-
----
-
-## 📸 Architecture Diagram
-
-![Architecture](./architecture/Serverless.png)
 
 ---
 
