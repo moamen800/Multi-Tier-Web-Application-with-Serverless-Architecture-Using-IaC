@@ -5,8 +5,9 @@ This repository delivers a complete **Infrastructure as Code (IaC)** implementat
 ---
 
 ## 📐 Architecture Overview
+
 The system is structured into **4 logical layers** for clear separation of concerns and scalability:
----
+
 ### 🔹 1. Edge Layer
 - **Amazon CloudFront**: Caches and distributes static content globally
 - **AWS WAF**: Protects against common web-based attacks (SQLi, XSS, etc.)
@@ -30,7 +31,7 @@ The system is structured into **4 logical layers** for clear separation of conce
 ### 📸 Architecture Diagram
 
 ![Architecture](./architecture/Serverless.png)
----
+
 ---
 
 ## 📁 Repository Structure
@@ -90,10 +91,10 @@ Ensure your IAM user or assumed role has access to provision the following:
 
 #### ✅ Docker Containers Used
 
-| Module         | Container Used                | Purpose                            |
-| -------------- | ----------------------------- | ---------------------------------- |
-| `ecs-frontend` | Custom Dockerfile (React/Vue) | Hosts frontend UI                  |
-| `ecs-backend`  | Custom Dockerfile (Node/Java) | Hosts backend APIs                 |
+| Module         | Container Used                | Purpose            |
+| -------------- | ----------------------------- | ------------------ |
+| `ecs-frontend` | Custom Dockerfile (React/Vue) | Hosts frontend UI  |
+| `ecs-backend`  | Custom Dockerfile (Node/Java) | Hosts backend APIs |
 
 ---
 
@@ -102,7 +103,7 @@ Ensure your IAM user or assumed role has access to provision the following:
 ```bash
 export AWS_ACCESS_KEY_ID=your_access_key
 export AWS_SECRET_ACCESS_KEY=your_secret_key
-export AWS_REGION=eu-west-1
+export AWS_REGION=your_preferred_region 
 ```
 
 ---
@@ -155,6 +156,32 @@ modules/monitoring/install-Prometheus-and-Grafana-Server.sh
 
 ---
 
+## 🔁 Continuous Integration (Terraform CI)
+
+A **GitHub Actions workflow** (`terraform-ci.yml`) automatically validates your Terraform code and plans changes whenever you push or open a pull request to the `main` branch.
+
+### CI Workflow Includes:
+
+* ✅ Code checkout
+* ✅ Terraform installation
+* ✅ `terraform init`
+* ✅ `terraform validate`
+* ✅ `terraform fmt -check`
+* ✅ `terraform plan`
+
+It uses **GitHub Secrets** to inject AWS credentials and region:
+
+```yaml
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+```
+
+> The CI ensures all infrastructure changes are **safe, validated, and formatted** before being applied.
+
+---
+
 ## 📑 Useful Commands
 
 ### 🔍 Check EC2 Cloud-Init Logs
@@ -176,4 +203,5 @@ terraform fmt -recursive
 ## 🧑‍💻 Author
 
 **Moamen Ahmed**
+
 📧 Email: [moamen800@gmail.com](mailto:moamen800@gmail.com)
